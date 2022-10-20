@@ -150,7 +150,7 @@ spec:
                 apiVersion: kafka.strimzi.io/v1beta2
                 kind: KafkaTopic
                 metadata:
-                  name: spec
+                  name: metrics
                   namespace: kafka
                   labels:
                     strimzi.io/cluster: kafka-brokers-cluster
@@ -158,30 +158,7 @@ spec:
                   partitions: 1
                   replicas: 2
                   config:
-                    cleanup.policy: compact
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: policy-kafka-topic-2
-        spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-          severity: low
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: kafka.strimzi.io/v1beta2
-                kind: KafkaTopic
-                metadata:
-                  name: status
-                  namespace: kafka
-                  labels:
-                    strimzi.io/cluster: kafka-brokers-cluster
-                spec:
-                  partitions: 1
-                  replicas: 2
-                  config:
-                    cleanup.policy: compact                    
+                    cleanup.policy: compact               
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
