@@ -10,10 +10,27 @@
 #### Test data flow to Kafka
 
 ## Install and Test Spark
-For background knowledge, or those familiar with Spark but in a non-Kubernetes environment, [Running Spark on Kubernetes](https://spark.apache.org/docs/latest/running-on-kubernetes.html) is an excellent reference material.
+For background knowledge, or those familiar with Spark but in a non-Kubernetes environment, [Running Spark on Kubernetes](https://spark.apache.org/docs/latest/running-on-kubernetes.html) is an excellent reference material. Infact this is a must for understanding the steps below.
 
+Spark can be installed in at least 2 different ways for the scenarios below. 
+1. You can install Spark Operator following [GoogleCloudPlatform/spark-on-k8s-operator](https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/quick-start-guide.md). This will allow us to launch a spark job by directly creating a CR. We have had some success with this. Launching complex jobs which require Kafka jars in classpath etc have failed. This looks like some errors related to permissions - we will be figuring this out in the near future.
+1. You can install Spark locally on your laptop. And lauch spark-submit from your machine pointing it out to a kube-api server. This has worked out well as shown in the examples below.
+
+#### Spark Install in the laptop
+Follow these simple steps to get Spark running on your macOS laptop.
+1. Download Spark
+1. Untar it to /opt/spark
+1. Install Java Runtime JRE
+1. Install Apache Maven
+1. Add path and classpath
+1. Run simple Spark example to test.
+1. Have a OpenShift (we have tested this against OpenShift cluster only thus far) cluster ready against which we can launch the Spark Jobs in `kubernetes` mode.
+1. Have the certificate authorities for the OpenShift cluster on your machine such that you can run `oc login` with certificates as shown below 
+    ```
+    oc login -u kubeadmin -p password https://api.xx.yy.zz:6443 --certificate-authority=/etc/ssl/certs/your-cert.crt
+    ```
 #### Spark Operator Install
-Install Spark Oprator following : [GoogleCloudPlatform/spark-on-k8s-operator](https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/quick-start-guide.md)
+Install Spark Operator following : [GoogleCloudPlatform/spark-on-k8s-operator](https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/quick-start-guide.md)
 We actually had to run: 
 ```
 helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
@@ -27,6 +44,11 @@ It installs __Spark Version 3.1.1__
 
 
 ## Building the Docker Driver for Spark
+
+This docker driver container can be used no matter which way Spark job is launched:
+- through Spark Operator
+- or from Spark running locally on the laptop
+
 We are using ` quay.io/opendatahub-contrib/pyspark:s3.0.1-h3.3.0_v0.1.0` image from Red Hat Open Data Hub (ODH) project.  The spark installed in Google Operator was `Version 3.1.1`. ODH had versions of Spark Driver `Version 3.0.1` and `Version 3.3` and nothing in between. So we chose an image `Version 3.0.1` assuming it Spark Submit from Spark 3.1.1 will be able to handle driver with `Version 3.0.1`.  We could also have used the one provided by Spark itself in which case we would have got `Version 3.1.1` - just did not try.
 ```
 cd spark
@@ -427,93 +449,14 @@ __The above results in Spark Submit as shown below (we find this out from the Op
 --conf spark.kubernetes.executor.label.version=3.0.1 
 local:///opt/spark/work-dir/helloworld.py
 ```
-https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443
---conf spark.kubernetes.authenticate.driver.serviceAccountName=my-release-spark \
-Caused by: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+\
 
-```
-/bin/spark-submit \
---master k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443 \
---deploy-mode cluster \
---conf spark.kubernetes.namespace=default \
---conf spark.app.name=spark-hello-jb-rem \
---conf spark.kubernetes.driver.pod.name=spark-hello-jb-rem-driver \
---conf spark.kubernetes.container.image=quay.io/bjoydeep/pyspark:latest \
---conf spark.kubernetes.container.image.pullPolicy=Always \
---conf spark.kubernetes.submission.waitAppCompletion=false \
---conf spark.kubernetes.driver.label.sparkoperator.k8s.io/app-name=spark-hello-jb-rem \
---conf spark.kubernetes.driver.label.sparkoperator.k8s.io/launched-by-spark-operator=true \
---conf spark.kubernetes.authenticate.driver.serviceAccountName=my-release-spark \
---conf spark.driver.cores=1 \
---conf spark.kubernetes.driver.limit.cores=1200m \
---conf spark.driver.memory=512m \
---conf spark.kubernetes.driver.label.version=3.0.1 \
---conf spark.kubernetes.executor.label.sparkoperator.k8s.io/app-name=spark-hello-jb-rem \
---conf spark.kubernetes.executor.label.sparkoperator.k8s.io/launched-by-spark-operator=true \
---conf spark.executor.instances=1 \
---conf spark.executor.cores=1 \
---conf spark.executor.memory=512m \
---conf spark.kubernetes.executor.label.version=3.0.1 \
--v local:///opt/spark/work-dir/helloworld.py
-```
 --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1 \
 --jars /opt/spark/jars/spark-sql-kafka-0-10_2.12-3.0.1.jar \
 --conf spark.driver.extraJavaOptions=-Divy.cache.dir=/tmp -Divy.home=/tmp \
 
-# Works - submit on local-spark; starts and then fails because all classpaths are not mentioned
-```
-/bin/spark-submit \
---master k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443 \
---deploy-mode cluster \
---conf spark.kubernetes.namespace=default \
---conf spark.app.name=spark-hello-jb-rem \
---conf spark.kubernetes.driver.pod.name=spark-hello-jb-rem-driver \
---packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1 \
---conf spark.kubernetes.container.image=quay.io/bjoydeep/pyspark:latest \
---conf spark.kubernetes.container.image.pullPolicy=Always \
---conf spark.kubernetes.submission.waitAppCompletion=false \
---conf spark.kubernetes.driver.label.sparkoperator.k8s.io/app-name=spark-hello-jb-rem \
---conf spark.kubernetes.driver.label.sparkoperator.k8s.io/launched-by-spark-operator=true \
---conf spark.kubernetes.authenticate.driver.serviceAccountName=my-release-spark \
---conf spark.driver.cores=1 \
---conf spark.kubernetes.driver.limit.cores=1200m \
---conf spark.driver.memory=512m \
---conf spark.kubernetes.driver.label.version=3.0.1 \
---conf spark.kubernetes.executor.label.sparkoperator.k8s.io/app-name=spark-hello-jb-rem \
---conf spark.kubernetes.executor.label.sparkoperator.k8s.io/launched-by-spark-operator=true \
---conf spark.executor.instances=1 \
---conf spark.executor.cores=1 \
---conf spark.executor.memory=512m \
---conf spark.kubernetes.executor.label.version=3.0.1 \
--v local:///opt/spark/work-dir/simpleKafkaConsumer.py
-```
-# Works - submit on local-spark
-```
-./bin/spark-submit \
---master k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443 \
---deploy-mode cluster \
---conf spark.kubernetes.namespace=default \
---conf spark.app.name=spark-kafka-jb \
---conf spark.kubernetes.driver.pod.name=spark-kafka-jb-driver \
---packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1,org.apache.spark:spark-token-provider-kafka-0-10_2.12:3.0.1,org.apache.commons:commons-pool2:2.6.2 \
---conf spark.kubernetes.container.image=quay.io/bjoydeep/pyspark:latest \
---conf spark.kubernetes.container.image.pullPolicy=Always \
---conf spark.kubernetes.submission.waitAppCompletion=false \
---conf spark.kubernetes.driver.label.sparkoperator.k8s.io/app-name=spark-kafka-jb \
---conf spark.kubernetes.driver.label.sparkoperator.k8s.io/launched-by-spark-operator=true \
---conf spark.kubernetes.authenticate.driver.serviceAccountName=my-release-spark \
---conf spark.driver.cores=1 \
---conf spark.kubernetes.driver.limit.cores=1200m \
---conf spark.driver.memory=512m \
---conf spark.kubernetes.driver.label.version=3.0.1 \
---conf spark.kubernetes.executor.label.sparkoperator.k8s.io/app-name=spark-kafka-jb \
---conf spark.kubernetes.executor.label.sparkoperator.k8s.io/launched-by-spark-operator=true \
---conf spark.executor.instances=1 \
---conf spark.executor.cores=1 \
---conf spark.executor.memory=512m \
---conf spark.kubernetes.executor.label.version=3.0.1 \
--v local:///opt/spark/work-dir/simpleKafkaConsumer.py
-```
+
+
 
 ```
 /opt/spark/bin/spark-submit 
@@ -584,7 +527,47 @@ local:///opt/spark/work-dir/simpleKafkaConnsumer.py
 
 
 ## Create a real Spark Application by submitting to a local Spark install
- __This works on my local machine. Look at how the ivy2 works on the home dir. The Spark google operator pod does not allow that.__
+
+Note that before you launch this, you must do a `oc login` to your cluster using the certificates.  Else you will see an error like: 
+```
+https://api.xx.yy.zz:6443
+--conf spark.kubernetes.authenticate.driver.serviceAccountName=my-release-spark \
+Caused by: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+```
+#### Launching a simple job
+
+Launching home grown `helloworld.py`
+```
+/bin/spark-submit \
+--master k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443 \
+--deploy-mode cluster \
+--conf spark.kubernetes.namespace=default \
+--conf spark.app.name=spark-hello-jb-rem \
+--conf spark.kubernetes.driver.pod.name=spark-hello-jb-rem-driver \
+--conf spark.kubernetes.container.image=quay.io/bjoydeep/pyspark:latest \
+--conf spark.kubernetes.container.image.pullPolicy=Always \
+--conf spark.kubernetes.submission.waitAppCompletion=false \
+--conf spark.kubernetes.driver.label.sparkoperator.k8s.io/app-name=spark-hello-jb-rem \
+--conf spark.kubernetes.driver.label.sparkoperator.k8s.io/launched-by-spark-operator=true \
+--conf spark.kubernetes.authenticate.driver.serviceAccountName=my-release-spark \
+--conf spark.driver.cores=1 \
+--conf spark.kubernetes.driver.limit.cores=1200m \
+--conf spark.driver.memory=512m \
+--conf spark.kubernetes.driver.label.version=3.0.1 \
+--conf spark.kubernetes.executor.label.sparkoperator.k8s.io/app-name=spark-hello-jb-rem \
+--conf spark.kubernetes.executor.label.sparkoperator.k8s.io/launched-by-spark-operator=true \
+--conf spark.executor.instances=1 \
+--conf spark.executor.cores=1 \
+--conf spark.executor.memory=512m \
+--conf spark.kubernetes.executor.label.version=3.0.1 \
+-v local:///opt/spark/work-dir/helloworld.py
+```
+
+#### Launching a Kafka streaming job
+
+Launching home grown `simpleKafkaConsumer.py`
+ 1. Look at the packages to see all the spark packages needed.
+ 1. Look at how the ivy2 works on the home dir. The Spark google operator pod does not allow that.
 ```
 (base) ➜  spark ./bin/spark-submit \
 --master k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443 \
