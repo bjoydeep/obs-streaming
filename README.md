@@ -1,16 +1,18 @@
 # Notes
+
+## Objectives
 ## Prereq
-### Install Vector
-### Install Kafka
-### Wire them up
-### Install Observability
-### Configure Observability to talk to Vector
-### Test data flow to Kafka
+#### Install Vector
+#### Install Kafka
+#### Wire them up
+#### Install Observability
+#### Configure Observability to talk to Vector
+#### Test data flow to Kafka
 
 ## Install and Test Spark
 For background knowledge, or those familiar with Spark but in a non-Kubernetes environment, [Running Spark on Kubernetes](https://spark.apache.org/docs/latest/running-on-kubernetes.html) is an excellent reference material.
 
-### Spark Operator Install
+#### Spark Operator Install
 Install Spark Oprator following : [GoogleCloudPlatform/spark-on-k8s-operator](https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/quick-start-guide.md)
 We actually had to run: 
 ```
@@ -21,24 +23,17 @@ helm install my-release spark-operator/spark-operator --namespace spark-operator
 - without sparkJobNamespace, the right service accounts to launcg the SparkApplication was not getting created.
 - for running an [example](https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/quick-start-guide.md#running-the-examples), this was good. The example did not run for other reasons which I did not debug.
 
-### Installed Version
-Welcome to
-      ____              __
-     / __/__  ___ _____/ /__
-    _\ \/ _ \/ _ `/ __/  '_/
-   /___/ .__/\_,_/_/ /_/\_\   version 3.1.1
-      /_/
-                        
-https://spark.apache.org/docs/3.1.1/#:~:text=Spark%20runs%20on%20Java%208,3.6%2B%20and%20R%203.5%2B.
+It installs __Spark Version 3.1.1__
 
-So we can use this image: https://github.com/opendatahub-io-contrib/spark-on-openshift/blob/main/spark-images/pyspark-3.0.1_hadoop-3.3.0.Dockerfile
 
-### Building the Docker
+## Building the Docker Driver for Spark
+We are using ` quay.io/opendatahub-contrib/pyspark:s3.0.1-h3.3.0_v0.1.0` image from Red Hat Open Data Hub (ODH) project.  The spark installed in Google Operator was `Version 3.1.1`. ODH had versions of Spark Driver `Version 3.0.1` and `Version 3.3` and nothing in between. So we chose an image `Version 3.0.1` assuming it Spark Submit from Spark 3.1.1 will be able to handle driver with `Version 3.0.1`.  We could also have used the one provided by Spark itself in which case we would have got `Version 3.1.1` - just did not try.
 ```
+cd spark
 docker build -t pyspark .
 ```
 
-### Testing the Docker
+#### Testing the Docker Driver manually
 ```
 (base) ➜  spark docker run -it pyspark /bin/bash
 ++ id -u
@@ -80,91 +75,7 @@ bin  conf  data  examples  jars  kubernetes  LICENSE  licenses	NOTICE	python	R  
 beeline		      find-spark-home	   load-spark-env.sh  pyspark.cmd      spark-class	 sparkR       spark-shell	spark-sql	spark-submit
 beeline.cmd	      find-spark-home.cmd  pyspark	      run-example      spark-class2.cmd  sparkR2.cmd  spark-shell2.cmd	spark-sql2.cmd	spark-submit2.cmd
 docker-image-tool.sh  load-spark-env.cmd   pyspark2.cmd       run-example.cmd  spark-class.cmd	 sparkR.cmd   spark-shell.cmd	spark-sql.cmd	spark-submit.cmd
-[jboss@9777580591d0 bin]$ ./spark-submit -version
-Error: Unrecognized option: -version
 
-Usage: spark-submit [options] <app jar | python file | R file> [app arguments]
-Usage: spark-submit --kill [submission ID] --master [spark://...]
-Usage: spark-submit --status [submission ID] --master [spark://...]
-Usage: spark-submit run-example [options] example-class [example args]
-
-Options:
-  --master MASTER_URL         spark://host:port, mesos://host:port, yarn,
-                              k8s://https://host:port, or local (Default: local[*]).
-  --deploy-mode DEPLOY_MODE   Whether to launch the driver program locally ("client") or
-                              on one of the worker machines inside the cluster ("cluster")
-                              (Default: client).
-  --class CLASS_NAME          Your application's main class (for Java / Scala apps).
-  --name NAME                 A name of your application.
-  --jars JARS                 Comma-separated list of jars to include on the driver
-                              and executor classpaths.
-  --packages                  Comma-separated list of maven coordinates of jars to include
-                              on the driver and executor classpaths. Will search the local
-                              maven repo, then maven central and any additional remote
-                              repositories given by --repositories. The format for the
-                              coordinates should be groupId:artifactId:version.
-  --exclude-packages          Comma-separated list of groupId:artifactId, to exclude while
-                              resolving the dependencies provided in --packages to avoid
-                              dependency conflicts.
-  --repositories              Comma-separated list of additional remote repositories to
-                              search for the maven coordinates given with --packages.
-  --py-files PY_FILES         Comma-separated list of .zip, .egg, or .py files to place
-                              on the PYTHONPATH for Python apps.
-  --files FILES               Comma-separated list of files to be placed in the working
-                              directory of each executor. File paths of these files
-                              in executors can be accessed via SparkFiles.get(fileName).
-
-  --conf, -c PROP=VALUE       Arbitrary Spark configuration property.
-  --properties-file FILE      Path to a file from which to load extra properties. If not
-                              specified, this will look for conf/spark-defaults.conf.
-
-  --driver-memory MEM         Memory for driver (e.g. 1000M, 2G) (Default: 1024M).
-  --driver-java-options       Extra Java options to pass to the driver.
-  --driver-library-path       Extra library path entries to pass to the driver.
-  --driver-class-path         Extra class path entries to pass to the driver. Note that
-                              jars added with --jars are automatically included in the
-                              classpath.
-
-  --executor-memory MEM       Memory per executor (e.g. 1000M, 2G) (Default: 1G).
-
-  --proxy-user NAME           User to impersonate when submitting the application.
-                              This argument does not work with --principal / --keytab.
-
-  --help, -h                  Show this help message and exit.
-  --verbose, -v               Print additional debug output.
-  --version,                  Print the version of current Spark.
-
- Cluster deploy mode only:
-  --driver-cores NUM          Number of cores used by the driver, only in cluster mode
-                              (Default: 1).
-
- Spark standalone or Mesos with cluster deploy mode only:
-  --supervise                 If given, restarts the driver on failure.
-
- Spark standalone, Mesos or K8s with cluster deploy mode only:
-  --kill SUBMISSION_ID        If given, kills the driver specified.
-  --status SUBMISSION_ID      If given, requests the status of the driver specified.
-
- Spark standalone, Mesos and Kubernetes only:
-  --total-executor-cores NUM  Total cores for all executors.
-
- Spark standalone, YARN and Kubernetes only:
-  --executor-cores NUM        Number of cores used by each executor. (Default: 1 in
-                              YARN and K8S modes, or all available cores on the worker
-                              in standalone mode).
-
- Spark on YARN and Kubernetes only:
-  --num-executors NUM         Number of executors to launch (Default: 2).
-                              If dynamic allocation is enabled, the initial number of
-                              executors will be at least NUM.
-  --principal PRINCIPAL       Principal to be used to login to KDC.
-  --keytab KEYTAB             The full path to the file that contains the keytab for the
-                              principal specified above.
-
- Spark on YARN only:
-  --queue QUEUE_NAME          The YARN queue to submit to (Default: "default").
-  --archives ARCHIVES         Comma separated list of archives to be extracted into the
-                              working directory of each executor.
 
 [jboss@9777580591d0 bin]$ ./spark-submit --version
 Welcome to
@@ -190,15 +101,9 @@ bin  conf  data  examples  jars  kubernetes  LICENSE  licenses	NOTICE	python	R  
 [jboss@9777580591d0 examples]$ ls
 jars  src
 [jboss@9777580591d0 examples]$ cd src/
-[jboss@9777580591d0 src]$ ;s
-bash: syntax error near unexpected token `;'
 [jboss@9777580591d0 src]$ ls
 main
 [jboss@9777580591d0 src]$ cd main/
-[jboss@9777580591d0 main]$ ls
-java  python  r  resources  scala  scripts
-[jboss@9777580591d0 main]$ xd python/
-bash: xd: command not found
 [jboss@9777580591d0 main]$ ls
 java  python  r  resources  scala  scripts
 [jboss@9777580591d0 main]$ cd python/
@@ -366,31 +271,12 @@ Type "help", "copyright", "credits" or "license" for more information.
 pip 19.3.1 from /usr/lib/python3.8/site-packages/pip (python 3.8)
 [jboss@9777580591d0 spark]$
 ```
-```
-./bin/spark-submit \
-    --master k8s://https://<k8s-apiserver-host>:<k8s-apiserver-port> \
-    --deploy-mode cluster \
-    --name spark-pi \
-    --class org.apache.spark.examples.SparkPi \
-    --conf spark.executor.instances=5 \
-    --conf spark.kubernetes.container.image=<spark-image> \
-    local:///path/to/examples.jar
 
 
-./bin/spark-submit \
-   --master yarn \
-   --deploy-mode cluster \
-   wordByExample.py
-
-
-./bin/spark-submit \
-   --master yarn \
-   --deploy-mode cluster \
-   local:///examples/src/main/python/pi.py 10
-
-```
-
-### Create a real Spark Application
+## Create a real Spark Application CR
+Spark Application can be created by creating the CR of kind `SparkApplication` as shown below. 
+#### Calculate Pi
+The snip below creates a CR for launching out of the box Spark example of calculating value of pi.
 
 ```
 apiVersion: "sparkoperator.k8s.io/v1beta2"
@@ -426,10 +312,8 @@ spec:
         memory: "4096m"
 ```        
 
-### Application level RBAC
-_Is this needed?_: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/manifest/spark-application-rbac/spark-application-rbac.yaml
-
-__HelloWorld__
+#### HelloWorld example
+The snip below creates a CR for launching  __HelloWorld__  Spark example as shown in helloworld.py . Note this file is also a part of the Spark Driver docker image built earlier.
 ```
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
@@ -463,8 +347,11 @@ spec:
         cpu: "2"
         memory: "4096m"
 ```
+#### TO CHECK
+_Is this needed Application level RBAC?_: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/manifest/spark-application-rbac/spark-application-rbac.yaml
 
-__Kafka__
+#### Simple Kafka Streaming Example
+__Kafka starts erroring out__
 
 ```
 apiVersion: "sparkoperator.k8s.io/v1beta2"
@@ -512,7 +399,7 @@ spec:
         memory: "4096m"
 ```        
 
-__Net spark submit__
+__The above results in Spark Submit as shown below (we find this out from the Operator logs)__
 ```
 /opt/spark/bin/spark-submit 
 --master k8s://https://172.30.0.1:443 
@@ -573,7 +460,7 @@ Caused by: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.s
 --jars /opt/spark/jars/spark-sql-kafka-0-10_2.12-3.0.1.jar \
 --conf spark.driver.extraJavaOptions=-Divy.cache.dir=/tmp -Divy.home=/tmp \
 
-# Works
+# Works - submit on local-spark; starts and then fails because all classpaths are not mentioned
 ```
 /bin/spark-submit \
 --master k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443 \
@@ -600,7 +487,7 @@ Caused by: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.s
 --conf spark.kubernetes.executor.label.version=3.0.1 \
 -v local:///opt/spark/work-dir/simpleKafkaConsumer.py
 ```
-# Works
+# Works - submit on local-spark
 ```
 ./bin/spark-submit \
 --master k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443 \
@@ -693,4 +580,167 @@ The jars for the packages stored in: /opt/spark/.ivy2/jars
 --conf spark.executor.memory=512m 
 --conf spark.kubernetes.executor.label.version=3.0.1 
 local:///opt/spark/work-dir/simpleKafkaConnsumer.py
+```
+
+
+## Create a real Spark Application by submitting to a local Spark install
+ __This works on my local machine. Look at how the ivy2 works on the home dir. The Spark google operator pod does not allow that.__
+```
+(base) ➜  spark ./bin/spark-submit \
+--master k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443 \
+--deploy-mode cluster \
+--conf spark.kubernetes.namespace=default \
+--conf spark.app.name=spark-kafka-jb \
+--conf spark.kubernetes.driver.pod.name=spark-kafka-jb-driver \
+--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1,org.apache.spark:spark-token-provider-kafka-0-10_2.12:3.0.1,org.apache.commons:commons-pool2:2.6.2 \
+--conf spark.kubernetes.container.image=quay.io/bjoydeep/pyspark:latest \
+--conf spark.kubernetes.container.image.pullPolicy=Always \
+--conf spark.kubernetes.submission.waitAppCompletion=false \
+--conf spark.kubernetes.driver.label.sparkoperator.k8s.io/app-name=spark-kafka-jb \
+--conf spark.kubernetes.driver.label.sparkoperator.k8s.io/launched-by-spark-operator=true \
+--conf spark.kubernetes.authenticate.driver.serviceAccountName=my-release-spark \
+--conf spark.driver.cores=1 \
+--conf spark.kubernetes.driver.limit.cores=1200m \
+--conf spark.driver.memory=512m \
+--conf spark.kubernetes.driver.label.version=3.0.1 \
+--conf spark.kubernetes.executor.label.sparkoperator.k8s.io/app-name=spark-kafka-jb \
+--conf spark.kubernetes.executor.label.sparkoperator.k8s.io/launched-by-spark-operator=true \
+--conf spark.executor.instances=1 \
+--conf spark.executor.cores=1 \
+--conf spark.executor.memory=512m \
+--conf spark.kubernetes.executor.label.version=3.0.1 \
+-v local:///opt/spark/work-dir/simpleKafkaConsumer.py
+Using properties file: null
+Parsed arguments:
+  master                  k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443
+  deployMode              cluster
+  executorMemory          512m
+  executorCores           1
+  totalExecutorCores      null
+  propertiesFile          null
+  driverMemory            512m
+  driverCores             1
+  driverExtraClassPath    null
+  driverExtraLibraryPath  null
+  driverExtraJavaOptions  null
+  supervise               false
+  queue                   null
+  numExecutors            1
+  files                   null
+  pyFiles                 null
+  archives                null
+  mainClass               null
+  primaryResource         local:///opt/spark/work-dir/simpleKafkaConsumer.py
+  name                    spark-kafka-jb
+  childArgs               []
+  jars                    null
+  packages                org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1,org.apache.spark:spark-token-provider-kafka-0-10_2.12:3.0.1,org.apache.commons:commons-pool2:2.6.2
+  packagesExclusions      null
+  repositories            null
+  verbose                 true
+
+Spark properties used, including those specified through
+ --conf and those from the properties file null:
+  (spark.app.name,spark-kafka-jb)
+  (spark.driver.cores,1)
+  (spark.driver.memory,512m)
+  (spark.executor.cores,1)
+  (spark.executor.instances,1)
+  (spark.executor.memory,512m)
+  (spark.kubernetes.authenticate.driver.serviceAccountName,my-release-spark)
+  (spark.kubernetes.container.image,quay.io/bjoydeep/pyspark:latest)
+  (spark.kubernetes.container.image.pullPolicy,Always)
+  (spark.kubernetes.driver.label.sparkoperator.k8s.io/app-name,spark-kafka-jb)
+  (spark.kubernetes.driver.label.sparkoperator.k8s.io/launched-by-spark-operator,true)
+  (spark.kubernetes.driver.label.version,3.0.1)
+  (spark.kubernetes.driver.limit.cores,1200m)
+  (spark.kubernetes.driver.pod.name,spark-kafka-jb-driver)
+  (spark.kubernetes.executor.label.sparkoperator.k8s.io/app-name,spark-kafka-jb)
+  (spark.kubernetes.executor.label.sparkoperator.k8s.io/launched-by-spark-operator,true)
+  (spark.kubernetes.executor.label.version,3.0.1)
+  (spark.kubernetes.namespace,default)
+  (spark.kubernetes.submission.waitAppCompletion,false)
+
+
+:: loading settings :: url = jar:file:/opt/spark/jars/ivy-2.5.0.jar!/org/apache/ivy/core/settings/ivysettings.xml
+Ivy Default Cache set to: /Users/jbanerje/.ivy2/cache
+The jars for the packages stored in: /Users/jbanerje/.ivy2/jars
+org.apache.spark#spark-sql-kafka-0-10_2.12 added as a dependency
+org.apache.spark#spark-token-provider-kafka-0-10_2.12 added as a dependency
+org.apache.commons#commons-pool2 added as a dependency
+:: resolving dependencies :: org.apache.spark#spark-submit-parent-3a1e09b5-0f24-46e0-b5a9-11b41ad1fdba;1.0
+	confs: [default]
+	found org.apache.spark#spark-sql-kafka-0-10_2.12;3.0.1 in central
+	found org.apache.spark#spark-token-provider-kafka-0-10_2.12;3.0.1 in central
+	found org.apache.kafka#kafka-clients;2.4.1 in central
+	found com.github.luben#zstd-jni;1.4.4-3 in central
+	found org.lz4#lz4-java;1.7.1 in central
+	found org.xerial.snappy#snappy-java;1.1.7.5 in central
+	found org.slf4j#slf4j-api;1.7.30 in central
+	found org.spark-project.spark#unused;1.0.0 in central
+	found org.apache.commons#commons-pool2;2.6.2 in central
+:: resolution report :: resolve 462ms :: artifacts dl 24ms
+	:: modules in use:
+	com.github.luben#zstd-jni;1.4.4-3 from central in [default]
+	org.apache.commons#commons-pool2;2.6.2 from central in [default]
+	org.apache.kafka#kafka-clients;2.4.1 from central in [default]
+	org.apache.spark#spark-sql-kafka-0-10_2.12;3.0.1 from central in [default]
+	org.apache.spark#spark-token-provider-kafka-0-10_2.12;3.0.1 from central in [default]
+	org.lz4#lz4-java;1.7.1 from central in [default]
+	org.slf4j#slf4j-api;1.7.30 from central in [default]
+	org.spark-project.spark#unused;1.0.0 from central in [default]
+	org.xerial.snappy#snappy-java;1.1.7.5 from central in [default]
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   9   |   0   |   0   |   0   ||   9   |   0   |
+	---------------------------------------------------------------------
+:: retrieving :: org.apache.spark#spark-submit-parent-3a1e09b5-0f24-46e0-b5a9-11b41ad1fdba
+	confs: [default]
+	0 artifacts copied, 9 already retrieved (0kB/11ms)
+22/10/16 07:50:38 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Main class:
+org.apache.spark.deploy.k8s.submit.KubernetesClientApplication
+Arguments:
+--primary-py-file
+local:///opt/spark/work-dir/simpleKafkaConsumer.py
+--main-class
+org.apache.spark.deploy.PythonRunner
+Spark config:
+(spark.app.name,spark-kafka-jb)
+(spark.app.submitTime,1665931838410)
+(spark.driver.cores,1)
+(spark.driver.memory,512m)
+(spark.executor.cores,1)
+(spark.executor.instances,1)
+(spark.executor.memory,512m)
+(spark.jars.packages,*********(redacted))
+(spark.kubernetes.authenticate.driver.serviceAccountName,my-release-spark)
+(spark.kubernetes.container.image,quay.io/bjoydeep/pyspark:latest)
+(spark.kubernetes.container.image.pullPolicy,Always)
+(spark.kubernetes.driver.label.sparkoperator.k8s.io/app-name,spark-kafka-jb)
+(spark.kubernetes.driver.label.sparkoperator.k8s.io/launched-by-spark-operator,true)
+(spark.kubernetes.driver.label.version,3.0.1)
+(spark.kubernetes.driver.limit.cores,1200m)
+(spark.kubernetes.driver.pod.name,spark-kafka-jb-driver)
+(spark.kubernetes.executor.label.sparkoperator.k8s.io/app-name,spark-kafka-jb)
+(spark.kubernetes.executor.label.sparkoperator.k8s.io/launched-by-spark-operator,true)
+(spark.kubernetes.executor.label.version,3.0.1)
+(spark.kubernetes.namespace,default)
+(spark.kubernetes.submission.waitAppCompletion,false)
+(spark.master,k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443)
+(spark.submit.deployMode,cluster)
+(spark.submit.pyFiles,)
+Classpath elements:
+/Users/jbanerje/.ivy2/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.0.1.jar
+/Users/jbanerje/.ivy2/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.0.1.jar
+/Users/jbanerje/.ivy2/jars/org.apache.commons_commons-pool2-2.6.2.jar
+/Users/jbanerje/.ivy2/jars/org.apache.kafka_kafka-clients-2.4.1.jar
+/Users/jbanerje/.ivy2/jars/org.spark-project.spark_unused-1.0.0.jar
+/Users/jbanerje/.ivy2/jars/com.github.luben_zstd-jni-1.4.4-3.jar
+/Users/jbanerje/.ivy2/jars/org.lz4_lz4-java-1.7.1.jar
+/Users/jbanerje/.ivy2/jars/org.xerial.snappy_snappy-java-1.1.7.5.jar
+/Users/jbanerje/.ivy2/jars/org.slf4j_slf4j-api-1.7.30.jar
+
 ```
