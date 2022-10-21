@@ -9,6 +9,7 @@
 ## Spark Streaming
 
 We will follow [Spark Structured Streaming](https://spark.apache.org/docs/3.3.0/structured-streaming-programming-guide.html) in this repository.
+## Getting Started
 ### Prereq
 
 For installing the pre-requistes, follow [this](https://github.com/bjoydeep/obs-streaming/blob/main/InstallPreReqs.md).
