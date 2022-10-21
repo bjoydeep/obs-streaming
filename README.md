@@ -12,12 +12,12 @@ Have a OpenShift (we have tested this against OpenShift cluster only thus far) c
 
 
 #### Install ACM 
-For downloading and installing the latest ACM release - at the time of creating this README - follow the instructions (here)[https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/install/installing#installing-while-connected-online].
+For downloading and installing the latest ACM release - at the time of creating this README - follow the instructions [here](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/install/installing#installing-while-connected-online).
 #### Configure Observability
-For configuring Observability for ACM, follow the instructions (here)[https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#enabling-observability].
+For configuring Observability for ACM, follow the instructions [here](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#enabling-observability).
 
 #### Install Kafka
-Using (kafka.yaml)[https://github.com/bjoydeep/obs-streaming/blob/main/policy/kafka.yaml] create a `ACM Policy` to deploy Kafka. This will create:
+Using [kafka.yaml](https://github.com/bjoydeep/obs-streaming/blob/main/policy/kafka.yaml) create a `ACM Policy` to deploy Kafka. This will create:
 1. Namespace kafka
 1. Deploy Strimzi Operator
 1. Create Kafka cluster
@@ -30,11 +30,11 @@ After installing `Kafka`,install `Vector` using this [deployment](https://github
 1. Create secret called `vector` in `open-cluster-management-observability` namespace which will allow ACM Observability to send data to vector.
 
 #### Configure Observability to send data to Vector
-Now that you have Observability enabled, you can configure the RemoteWrite endpoint to Vector as mentioned (here)[https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#export-metrics-to-external-endpoints].
+Now that you have Observability enabled, you can configure the RemoteWrite endpoint to Vector as mentioned [here](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#export-metrics-to-external-endpoints).
 
-Note the (secret)[https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#creating-the-kubernetes-secret-for-external-endpoint] needed has already been created when we installed Vector. So this step can be skipped.
+Note the [secret](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#creating-the-kubernetes-secret-for-external-endpoint) needed has already been created when we installed Vector. So this step can be skipped.
 
-We only need to change the MCO CR as explained (here)[https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#updating-the-multiclusterobservability-cr]. For our example, it means adding the `writeStorage` section as below.
+We only need to change the MCO CR as explained [here](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#updating-the-multiclusterobservability-cr). For our example, it means adding the `writeStorage` section as below.
 ```
   storageConfig:
     ....
