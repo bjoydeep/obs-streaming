@@ -1,12 +1,50 @@
 # Notes
 
 ## Objectives
+ Our goal is to take Prometheus style metrics, stream it to Kafka and apply streaming analytics in Spark. The set up here is as below.
+
+ As you could easily guess, we could easily do this same flow using Prometheus RemoteWrite API instead of ACM. Pros and cons of the above 2 are really not relevant to the objective of this repository.
+
+ If you used a different metric stream (non-Prometheus) principles applied would be exactly the same. In the python module called in Spark - `simpleKafkaConsumer.py` in this example - the schema as seen in `metrics` topic would need to be changed.
 ## Prereq
-#### Install Vector
+
+Have a OpenShift (we have tested this against OpenShift cluster only thus far) cluster ready.
+
+
+#### Install ACM 
+For downloading and installing the latest ACM release - at the time of creating this README - follow the instructions (here)[https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/install/installing#installing-while-connected-online].
+#### Configure Observability
+For configuring Observability for ACM, follow the instructions (here)[https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#enabling-observability].
+
 #### Install Kafka
-#### Wire them up
-#### Install Observability
-#### Configure Observability to talk to Vector
+Using (kafka.yaml)[https://github.com/bjoydeep/obs-streaming/blob/main/policy/kafka.yaml] create a `ACM Policy` to deploy Kafka. This will create:
+1. Namespace kafka
+1. Deploy Strimzi Operator
+1. Create Kafka cluster
+1. Create `metrics` topic
+#### Install Vector
+After installing `Kafka`,install `Vector` using this [deployment](https://github.com/bjoydeep/obs-streaming/blob/main/policy/vector.yaml). This will install:
+1. Vector
+1. Create required service
+1. Configure it to listen for Prometheus RemoteWrite and send data to `Kafka` metrics topic.
+1. Create secret called `vector` in `open-cluster-management-observability` namespace which will allow ACM Observability to send data to vector.
+
+#### Configure Observability to send data to Vector
+Now that you have Observability enabled, you can configure the RemoteWrite endpoint to Vector as mentioned (here)[https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#export-metrics-to-external-endpoints].
+
+Note the (secret)[https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#creating-the-kubernetes-secret-for-external-endpoint] needed has already been created when we installed Vector. So this step can be skipped.
+
+We only need to change the MCO CR as explained (here)[https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#updating-the-multiclusterobservability-cr]. For our example, it means adding the `writeStorage` section as below.
+```
+  storageConfig:
+    ....
+    ....
+    writeStorage:
+      - key: ep.yaml
+        name: vector
+```
+
+
 #### Test data flow to Kafka
 
 ## Install and Test Spark
@@ -18,17 +56,45 @@ Spark can be installed in at least 2 different ways for the scenarios below.
 
 #### Spark Install in the laptop
 Follow these simple steps to get Spark running on your macOS laptop.
-1. Download Spark
+1. Follow [Download Spark](https://spark.apache.org/downloads.html) to get it onto your laptop.
 1. Untar it to /opt/spark
+    ```
+    tar -xzf spark-*.tgz
+    mv spark-* /opt/spark
+
+    ```
+    _Substitute * with details of your spark image_
 1. Install Java Runtime JRE
+    ```
+    brew install java
+    ```
 1. Install Apache Maven
+    ```
+    brew install maven
+    ```
 1. Add path and classpath
+    _Not sure if this all is needed, but nevertheless :_
+    
+    Edit ~/.zshrc and add
+    ```
+    export SPARK_HOME=/opt/spark
+    export PATH=＄SPARK_HOME/bin:＄PATH
+    export JAVA_HOME="/usr/local/Cellar/openjdk/19/libexec/openjdk.jdk/Contents/Home
+    ```
+1. Make sure you have python 3.9 (for the Spark Version I downloaded)
 1. Run simple Spark example to test.
+    ```
+    cd /opt/spark
+    ./bin/spark-submit examples/src/main/python/pi.py 10
+    ```
 1. Have a OpenShift (we have tested this against OpenShift cluster only thus far) cluster ready against which we can launch the Spark Jobs in `kubernetes` mode.
 1. Have the certificate authorities for the OpenShift cluster on your machine such that you can run `oc login` with certificates as shown below 
     ```
     oc login -u kubeadmin -p password https://api.xx.yy.zz:6443 --certificate-authority=/etc/ssl/certs/your-cert.crt
     ```
+    To prepare `your-cert.crt` file:
+    1. In any namespace of the OpenShift cluster, there is a configmap called `kube-root-ca.crt `. This has the authority chain
+    1. Just copy the contents and create `your-cert.crt`. In my macOS, this file needed to be created under /etc/ssl/certs/
 #### Spark Operator Install
 Install Spark Operator following : [GoogleCloudPlatform/spark-on-k8s-operator](https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/quick-start-guide.md)
 We actually had to run: 
@@ -50,12 +116,18 @@ This docker driver container can be used no matter which way Spark job is launch
 - or from Spark running locally on the laptop
 
 We are using ` quay.io/opendatahub-contrib/pyspark:s3.0.1-h3.3.0_v0.1.0` image from Red Hat Open Data Hub (ODH) project.  The spark installed in Google Operator was `Version 3.1.1`. ODH had versions of Spark Driver `Version 3.0.1` and `Version 3.3` and nothing in between. So we chose an image `Version 3.0.1` assuming it Spark Submit from Spark 3.1.1 will be able to handle driver with `Version 3.0.1`.  We could also have used the one provided by Spark itself in which case we would have got `Version 3.1.1` - just did not try.
+
+The docker image is available for free download at `quay.io/bjoydeep/pyspark:latest`.
+
+
+#### Testing the Docker Driver manually
+
+You  can download the image from quay.io and test it. Else, you can locally build it:
 ```
 cd spark
 docker build -t pyspark .
 ```
-
-#### Testing the Docker Driver manually
+And then test it - 
 ```
 (base) ➜  spark docker run -it pyspark /bin/bash
 ++ id -u
@@ -727,3 +799,7 @@ Classpath elements:
 /Users/jbanerje/.ivy2/jars/org.slf4j_slf4j-api-1.7.30.jar
 
 ```
+
+## Spark Streaming
+
+We will follow [Spark Structured Streaming](https://spark.apache.org/docs/3.3.0/structured-streaming-programming-guide.html) in this repository. 
