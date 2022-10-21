@@ -6,6 +6,9 @@
  As you could easily guess, we could easily do this same flow using Prometheus RemoteWrite API instead of ACM. Pros and cons of the above 2 are really not relevant to the objective of this repository.
 
  If you used a different metric stream (non-Prometheus) principles applied would be exactly the same. In the python module called in Spark - `simpleKafkaConsumer.py` in this example - the schema as seen in `metrics` topic would need to be changed.
+## Spark Streaming
+
+We will follow [Spark Structured Streaming](https://spark.apache.org/docs/3.3.0/structured-streaming-programming-guide.html) in this repository.
 ### Prereq
 
 For installing the pre-requistes, follow [this](https://github.com/bjoydeep/obs-streaming/blob/main/InstallPreReqs.md).
@@ -22,6 +25,4 @@ For building docker container for Spark Driver, follow [this](https://github.com
 
 For launching a real Spark Application, follow [this](https://github.com/bjoydeep/obs-streaming/blob/main/LaunchSparkJob.md).
 
-### Spark Streaming
-
-We will follow [Spark Structured Streaming](https://spark.apache.org/docs/3.3.0/structured-streaming-programming-guide.html) in this repository. 
+ 
