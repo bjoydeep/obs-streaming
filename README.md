@@ -2,13 +2,15 @@
 
 ## Objectives
  Our goal is to take Prometheus style metrics, stream it to Kafka and apply streaming analytics in Spark. The set up here is as below.
+ 
+ ![](https://github.com/open-cluster-management/perf-analysis/blob/master/Telemetry%20Architecture.png)
 
  As you could easily guess, we could easily do this same flow using Prometheus RemoteWrite API instead of ACM. Pros and cons of the above two different methods are really not relevant to the objective of this repository.
 
  If you used a different metric stream (non-Prometheus) principles applied would be exactly the same. In the python module called in Spark - [simpleKafkaConsumer.py](spark/simpleKafkaConsumer.py) in this example - the schema as seen in `metrics` topic would need to be changed.
 ## Spark Streaming
 
-We will follow [Spark Structured Streaming](https://spark.apache.org/docs/3.3.0/structured-streaming-programming-guide.html) in this repository.
+We will follow [Spark Structured Streaming](https://spark.apache.org/docs/3.3.0/structured-streaming-programming-guide.html).
 ## Getting Started
 ### Prereq
 
