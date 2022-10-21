@@ -2,8 +2,8 @@
 
 ## Objectives
  Our goal is to take Prometheus style metrics, stream it to Kafka and apply streaming analytics in Spark. The set up here is as below.
- 
- ![](https://github.com/open-cluster-management/perf-analysis/blob/master/Telemetry%20Architecture.png)
+
+ ![](proposed_architecture.png)
 
  As you could easily guess, we could easily do this same flow using Prometheus RemoteWrite API instead of ACM. Pros and cons of the above two different methods are really not relevant to the objective of this repository.
 
