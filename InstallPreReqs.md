@@ -9,13 +9,13 @@ For downloading and installing the latest ACM release - at the time of creating 
 For configuring Observability for ACM, follow the instructions [here](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#enabling-observability).
 
 #### Install Kafka
-Using [kafka.yaml](https://github.com/bjoydeep/obs-streaming/blob/main/policy/kafka.yaml) create a `ACM Policy` to deploy Kafka. This will create:
+Using [kafka.yaml](policy/kafka.yaml) create a `ACM Policy` to deploy Kafka. This will create:
 1. Namespace kafka
 1. Deploy Strimzi Operator
 1. Create Kafka cluster
 1. Create `metrics` topic
 #### Install Vector
-After installing `Kafka`,install `Vector` using this [deployment](https://github.com/bjoydeep/obs-streaming/blob/main/policy/vector.yaml). This will install:
+After installing `Kafka`,install `Vector` using this [deployment](policy/vector.yaml). This will install:
 1. Vector
 1. Create required service
 1. Configure it to listen for Prometheus RemoteWrite and send data to `Kafka` metrics topic.

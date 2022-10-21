@@ -47,7 +47,7 @@ spec:
 ```        
 
 #### HelloWorld example
-The snip below creates a CR for launching  __HelloWorld__  Spark example as shown in helloworld.py . Note this file is also a part of the Spark Driver docker image built earlier.
+The snip below creates a CR for launching  __HelloWorld__  Spark example as shown in [helloworld.py](spark/helloworld.py) . Note this file is also a part of the Spark Driver docker image built earlier.
 ```
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
@@ -248,7 +248,7 @@ Caused by: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.s
 ```
 #### Launching a simple job
 
-Launching home grown `helloworld.py`
+Launching home grown [helloworld.py](spark/helloworld.py)
 ```
 /bin/spark-submit \
 --master k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443 \
@@ -277,7 +277,7 @@ Launching home grown `helloworld.py`
 
 #### Launching a Kafka streaming job
 
-Launching home grown `simpleKafkaConsumer.py`
+Launching home grown [simpleKafkaConsumer.py](spark/simpleKafkaConsumer.py)
  1. Look at the packages to see all the spark packages needed.
  1. Look at how the ivy2 works on the home dir. The Spark google operator pod does not allow that.
 ```
