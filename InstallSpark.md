@@ -1,6 +1,5 @@
 ## Install and Test Spark
 
-For installing and Testing Spark, follow [this]().
 For background knowledge, or those familiar with Spark but in a non-Kubernetes environment, [Running Spark on Kubernetes](https://spark.apache.org/docs/latest/running-on-kubernetes.html) is an excellent reference material. Infact this is a must for understanding the steps below.
 
 Spark can be installed in at least 2 different ways for the scenarios below. 
@@ -48,6 +47,8 @@ Follow these simple steps to get Spark running on your macOS laptop.
     To prepare `your-cert.crt` file:
     1. In any namespace of the OpenShift cluster, there is a configmap called `kube-root-ca.crt `. This has the authority chain
     1. Just copy the contents and create `your-cert.crt`. In my macOS, this file needed to be created under /etc/ssl/certs/
+
+This will install latest Spark. At the time of writing this, it installs __Spark Version 3.3.0__    
 #### Spark Operator Install
 Install Spark Operator following : [GoogleCloudPlatform/spark-on-k8s-operator](https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/quick-start-guide.md)
 We actually had to run: 

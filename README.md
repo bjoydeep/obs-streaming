@@ -8,19 +8,19 @@
  If you used a different metric stream (non-Prometheus) principles applied would be exactly the same. In the python module called in Spark - `simpleKafkaConsumer.py` in this example - the schema as seen in `metrics` topic would need to be changed.
 ### Prereq
 
-For installing the pre-requistes, follow [this]().
+For installing the pre-requistes, follow [this](https://github.com/bjoydeep/obs-streaming/blob/main/InstallPreReqs.md).
 
 ### Install and Test Spark
 
-For installing and Testing Spark, follow [this]().
+For installing and Testing Spark, follow [this]https://github.com/bjoydeep/obs-streaming/blob/main/InstallSpark.md).
 
 ### Building the Docker Driver for Spark
 
-For building docker container for Spark Driver, follow [this]().
+For building docker container for Spark Driver, follow [this](https://github.com/bjoydeep/obs-streaming/blob/main/CreateSparkDockerDriver.md).
 
 ### Create a real Spark Application CR
 
-For launching a real Spark Application, follow [this]().
+For launching a real Spark Application, follow [this](https://github.com/bjoydeep/obs-streaming/blob/main/LaunchSparkJob.md).
 
 ### Spark Streaming
 

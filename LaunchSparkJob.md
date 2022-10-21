@@ -1,4 +1,13 @@
-## Create a real Spark Application CR
+## Launch Spark Job
+Recall we installed Spark in 2 different ways - 
+- Google Spark Operator on the OpenShift cluster directly
+- Spark on the laptop
+
+If you want to test the Google Spark Operator, you will have to create a Spark Application CR as [shown below](#Create-a-real-Spark-Application-CR).
+
+If you want to test the Spark installed on laptop, you will run a Spark submit job as [shown below](#Create-a-real-Spark-Application-by-submitting-to-a-local-Spark-install).
+
+### Create a real Spark Application CR
 Spark Application can be created by creating the CR of kind `SparkApplication` as shown below. 
 #### Calculate Pi
 The snip below creates a CR for launching out of the box Spark example of calculating value of pi.
@@ -229,7 +238,7 @@ local:///opt/spark/work-dir/simpleKafkaConnsumer.py
 ```
 
 
-## Create a real Spark Application by submitting to a local Spark install
+### Create a real Spark Application by submitting to a local Spark install
 
 Note that before you launch this, you must do a `oc login` to your cluster using the certificates.  Else you will see an error like: 
 ```
