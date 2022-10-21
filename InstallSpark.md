@@ -4,7 +4,7 @@ For background knowledge, or those familiar with Spark but in a non-Kubernetes e
 
 Spark can be installed in at least 2 different ways for the scenarios below. 
 1. You can install [Spark Operator](#Spark-Operator-Install). This will allow us to launch a spark job by directly creating a CR. We have had some success with this. Launching complex jobs which require Kafka jars in classpath etc have failed. This looks like some errors related to permissions - we will be figuring this out in the near future.
-1. You can install [Spark locally on your laptop](#Spark-Install-in-the-laptop). Then you can lauch spark-submit from your machine pointing it out to a kube-api server. This has worked out well as shown [here](LaunchSparkJob.md).
+1. You can install [Spark locally on your laptop](#Spark-Install-in-the-laptop). Then you can lauch spark-submit from your machine pointing it out to a kube-api server. This has worked out well as shown [here](LaunchSparkJob.md#Create-a-real-Spark-Application-by-submitting-to-a-local-Spark-install).
 
 #### Spark Install in the laptop
 Follow these simple steps to get Spark running on your macOS laptop.
