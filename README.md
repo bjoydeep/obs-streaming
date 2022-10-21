@@ -12,7 +12,7 @@ For installing the pre-requistes, follow [this](https://github.com/bjoydeep/obs-
 
 ### Install and Test Spark
 
-For installing and Testing Spark, follow [this]https://github.com/bjoydeep/obs-streaming/blob/main/InstallSpark.md).
+For installing and Testing Spark, follow [this](https://github.com/bjoydeep/obs-streaming/blob/main/InstallSpark.md).
 
 ### Building the Docker Driver for Spark
 
