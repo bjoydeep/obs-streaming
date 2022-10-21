@@ -85,7 +85,7 @@ spec:
 _Is this needed Application level RBAC?_: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/manifest/spark-application-rbac/spark-application-rbac.yaml
 
 #### Simple Kafka Streaming Example
-__Kafka starts erroring out__
+Trying to launch home grown [simpleKafkaConsumer.py](spark/simpleKafkaConsumer.py) but __Kafka starts erroring out__ while using Operator. We are still debugging this. It appears to be some permission related issue  - we will get to the bottom of this soon.
 
 ```
 apiVersion: "sparkoperator.k8s.io/v1beta2"
