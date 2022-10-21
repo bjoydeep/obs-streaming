@@ -31,10 +31,7 @@ After installing `Kafka`,install `Vector` using this [deployment](https://github
 
 #### Configure Observability to send data to Vector
 Now that you have Observability enabled, you can configure the RemoteWrite endpoint to Vector as mentioned [here](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#export-metrics-to-external-endpoints).
-
-Note the [secret](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#creating-the-kubernetes-secret-for-external-endpoint) needed has already been created when we installed Vector. So this step can be skipped.
-
-We only need to change the MCO CR as explained [here](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#updating-the-multiclusterobservability-cr). For our example, it means adding the `writeStorage` section as below.
+ Note the [secret](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#creating-the-kubernetes-secret-for-external-endpoint) needed has already been created when we installed Vector. So this step can be skipped. Therefore only step needed is to change the MCO CR as explained [here](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#updating-the-multiclusterobservability-cr). For our example, it means adding the `writeStorage` section as below.
 ```
   storageConfig:
     ....
@@ -47,6 +44,10 @@ We only need to change the MCO CR as explained [here](https://access.redhat.com/
 
 #### Test data flow to Kafka
 
+Now data should be flowing into `Kafka` topic `metrics`. To test this, log into the Terminal of the `kafka-brokers-cluster-kafka-*` pod created in the namespace `kafka` in your OpenShift cluster. Run this command to use the Kafka commandline consumer and you will see data flow in within maximum of 5 min.
+```
+/opt/kafka/bin/kafka-console-consumer.sh --topic metrics --bootstrap-server kafka-brokers-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+```
 ## Install and Test Spark
 For background knowledge, or those familiar with Spark but in a non-Kubernetes environment, [Running Spark on Kubernetes](https://spark.apache.org/docs/latest/running-on-kubernetes.html) is an excellent reference material. Infact this is a must for understanding the steps below.
 
