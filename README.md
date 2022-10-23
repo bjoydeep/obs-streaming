@@ -30,4 +30,8 @@ For building docker container for Spark Driver, follow [this](CreateSparkDockerD
 
 For launching a real Spark Application, follow [this](LaunchSparkJob.md).
 
+### Initial motivating example
+
+For details of the intial example, follow follow [this](ParsingMetrics.md).
+
  
