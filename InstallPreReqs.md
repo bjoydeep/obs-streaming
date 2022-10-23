@@ -21,6 +21,7 @@ After installing `Kafka`,install `Vector` using this [deployment](policy/vector.
 1. Configure it to listen for Prometheus RemoteWrite and send data to `Kafka` metrics topic.
 1. Create secret called `vector` in `open-cluster-management-observability` namespace which will allow ACM Observability to send data to vector.
 
+We have not explored [prometheus-kafka-adapter](https://github.com/Telefonica/prometheus-kafka-adapter). But this could be another viable alertnative to Vector. The metric parsing off Kafka could be simpler by leveraging some capabilities of this adapter.
 #### Configure Observability to send data to Vector
 Now that you have Observability enabled, you can configure the RemoteWrite endpoint to Vector as mentioned [here](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#export-metrics-to-external-endpoints).
  Note the [secret](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#creating-the-kubernetes-secret-for-external-endpoint) needed has already been created when we installed Vector. So this step can be skipped. Therefore only step needed is to change the MCO CR as explained [here](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#updating-the-multiclusterobservability-cr). For our example, it means adding the `writeStorage` section as below.
