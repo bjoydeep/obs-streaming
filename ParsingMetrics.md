@@ -17,7 +17,7 @@ In the initial motivating example [simpleKafkaConsumer.py](spark/simpleKafkaCons
     - value: `0.010692756633701114`
 - filter out by metric called ALERTS that are in alertstate=firing.
 
-When you run this initial example, you will see output which looks like as below:
+Concretely, when you run this initial example you will see `only alerts that are firing now` - ie which is happening currently. You will see output which looks like as below:
 ```
 Kafka data stream schema -----
 root
@@ -98,4 +98,4 @@ Batch: 4
 
 ```
 
-More involved processing follows.
+More involved processing follows. However, if you are wondering at the art of possible now, read [Spark Structured Streaming](https://spark.apache.org/docs/3.3.0/structured-streaming-programming-guide.html)

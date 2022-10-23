@@ -1,7 +1,7 @@
 # Notes
 
 ## Objectives
- Our goal is to take Prometheus style metrics, stream it to Kafka and apply streaming analytics in Spark. Very soon we would be expanding this to include key cluster events (not to be confused with alerts; alerts already come in through the metric stream) like cluster scaling, node memory pressure, cluster upgrade etc. Speaking in a more generic way - the goal is to build AI/ML/Statistical models around streaming observability data. We could stray to data at rest aka batch processing as well.
+ Our goal is to take Prometheus style metrics, stream it to Kafka and apply streaming analytics in Spark. Very soon we would be expanding this to include key cluster events (not to be confused with alerts; alerts already come in through the metric stream) like cluster scaling, node memory pressure, cluster upgrade etc. Speaking in a more generic way - the goal is to build AI/ML/Statistical models around streaming observability data. We could stray to data at rest aka batch processing as well. If you are in a TLDR; mode and want to understand more about the ouput of the motivating example, look [below](#Initial-motivating-example)
  
  The set up here is as below.
 
@@ -32,6 +32,6 @@ For launching a real Spark Application, follow [this](LaunchSparkJob.md).
 
 ### Initial motivating example
 
-For details of the intial example, follow follow [this](ParsingMetrics.md).
+For details of the intial example, follow [this](ParsingMetrics.md).
 
  
