@@ -280,6 +280,7 @@ Launching home grown [helloworld.py](spark/helloworld.py)
 Launching home grown [simpleKafkaConsumer.py](spark/simpleKafkaConsumer.py)
  1. Look at the packages to see all the spark packages needed.
  1. Look at how the ivy2 works on the home dir. The Spark google operator pod does not allow that.
+ 1. This also required to add 3 jars to the `/opt/spark/jar` in the local spark install. 
 ```
 (base) ➜  spark ./bin/spark-submit \
 --master k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443 \

@@ -1,7 +1,9 @@
 # Notes
 
 ## Objectives
- Our goal is to take Prometheus style metrics, stream it to Kafka and apply streaming analytics in Spark. The set up here is as below.
+ Our goal is to take Prometheus style metrics, stream it to Kafka and apply streaming analytics in Spark. Very soon we would be expanding this to include key cluster events (not to be confused with alerts; alerts already come in through the metric stream) like cluster scaling, node memory pressure, cluster upgrade etc. Speaking in a more generic way - the goal is to build AI/ML/Statistical models around streaming observability data. We could stray to data at rest aka batch processing as well.
+ 
+ The set up here is as below.
 
  ![](proposed_architecture.png)
 
