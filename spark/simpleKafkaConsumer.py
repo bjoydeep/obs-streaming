@@ -29,7 +29,7 @@ if __name__ == "__main__":
     df.printSchema()
 
 
-    # Start running the query that prints the running counts to the console
+    # Focus only the value column of the schema. That is the only one which has data
     topicDF= df.selectExpr("CAST(value AS STRING)")
     
 

@@ -49,6 +49,7 @@ WORKDIR /opt/spark/work-dir
 
 COPY helloworld.py .
 COPY simpleKafkaConsumer.py .
+COPY simpleLogConsumer.py .
 
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
 
