@@ -1,0 +1,16 @@
+apiVersion: logging.openshift.io/v1
+kind: ClusterLogging
+metadata:
+  # name and namespace fixed
+  name: instance
+  namespace: openshift-logging
+spec:
+  collection:
+    logs:
+      type: fluentd
+  forwarder:
+    # will change to vector in later versions
+    fluentd:
+      buffer:
+        chunkLimitSize: 500k
+  managementState: Managed

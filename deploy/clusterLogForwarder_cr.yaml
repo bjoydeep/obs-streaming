@@ -1,0 +1,18 @@
+apiVersion: logging.openshift.io/v1
+kind: ClusterLogForwarder
+metadata:
+  # name, namespace fixed
+  name: instance
+  namespace: openshift-logging
+spec:
+  outputs:
+    - name: remote-kafka
+      type: kafka
+      url: >-
+        http://kafka-brokers-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092/logs
+  pipelines:
+    - inputRefs:
+        - infrastructure
+      name: enable-log-store
+      outputRefs:
+        - remote-kafka
