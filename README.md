@@ -18,15 +18,18 @@
 We will follow [Spark Structured Streaming](https://spark.apache.org/docs/3.3.0/structured-streaming-programming-guide.html).
 
 ### Initial motivating example
-As a starter, we have added 2 examples - one for logs and one for metrics.
+As a starter, we have added a few simple examples - one for logs and one for metrics.
 1. Streaming Metric Analytic
-Gets streaming metrics and finds out only the active alerts that are firing. [Code here](../obs-streaming/spark/streaming/simpleKafkaMetricConsumer.py).
+
+    Gets streaming metrics and finds out only the active alerts that are firing. [Code here](../obs-streaming/spark/streaming/simpleKafkaMetricConsumer.py).
 
 1. Streaming Log/Event Analytic
-Gets streaming Infrastructure Logs and Kubernetes events and filters out only the current kubernetes events. [Code here](../obs-streaming/spark/streaming/simpleKafkaLogConsumer.py).
+
+    Gets streaming Infrastructure Logs and Kubernetes events and filters out only the current kubernetes events. [Code here](../obs-streaming/spark/streaming/simpleKafkaLogConsumer.py).
 
 1. Streaming Anamoly Detection on metric
-_follows soon_
+
+    _follows soon_
 
 ### Getting Started
 #### Prereq
