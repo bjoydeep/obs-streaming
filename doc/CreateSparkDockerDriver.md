@@ -11,7 +11,7 @@ The docker image is available for free download at `quay.io/bjoydeep/pyspark:lat
 
 #### Testing the Docker Driver manually
 
-You  can download the image from quay.io and test it. Else, you can locally build [Dockefile](spark/Dockerfile):
+You  can download the image from quay.io and test it. Else, you can locally build [Dockefile](../spark/Dockerfile):
 ```
 cd spark
 docker build -t pyspark .

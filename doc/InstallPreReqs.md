@@ -3,19 +3,19 @@
 Have a OpenShift (we have tested this against OpenShift cluster only thus far) cluster ready.
 
 
-#### Install ACM 
+### Install ACM 
 For downloading and installing the latest ACM release - at the time of creating this README - follow the instructions [here](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/install/installing#installing-while-connected-online).
 #### Configure Observability
 For configuring Observability for ACM, follow the instructions [here](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/observability/observing-environments-intro#enabling-observability).
 
-#### Install Kafka
-Using [kafka.yaml](policy/kafka.yaml) create a `ACM Policy` to deploy Kafka. This will create:
+### Install Kafka
+Using [kafka.yaml](../deploy-using-acm-policy/kafka.yaml) create a `ACM Policy` to deploy Kafka. This will create:
 1. Namespace kafka
 1. Deploy Strimzi Operator
 1. Create Kafka cluster
 1. Create `metrics` topic
-#### Install Vector
-After installing `Kafka`,install `Vector` using this [deployment](policy/vector.yaml). This will install:
+### Install Vector
+After installing `Kafka`,install `Vector` using this [deployment](../deploy/vector.yaml). This will install:
 1. Vector
 1. Create required service
 1. Configure it to listen for Prometheus RemoteWrite and send data to `Kafka` metrics topic.
@@ -41,3 +41,10 @@ Now data should be flowing into `Kafka` topic `metrics`. To test this, log into 
 ```
 /opt/kafka/bin/kafka-console-consumer.sh --topic metrics --bootstrap-server kafka-brokers-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
 ```
+
+### Install ClusterLoggingOperator
+
+1. Install CLO on OCP 4.10 - CLO Version: `5.5.3`
+1. Create [ClusterLogging CR](../deploy/clusterLogging_cr.yaml)
+1. Create [ClusterLogForwarder CR](../deploy/clusterLogForwarder_cr.yaml). Notes this forwards to "internal kafka service". We will need to change it for forward to external kafka (just did not have the time!)
+1. Create [KafkaTopic CR](../deploy/kafkaTopic_for_log_cr.yaml) for logs

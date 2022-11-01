@@ -10,7 +10,7 @@
 
 #### Initial motivating example
 
-In the initial motivating example [simpleKafkaConsumer.py](spark/simpleKafkaConsumer.py) we :
+In the initial motivating example [simpleKafkaMetricConsumer.py](../spark/streaming/simpleKafkaMetricConsumer.py) we :
 - split this stream to timestamp, metric, value format
     - timestamp: `2022-10-21T14:55:53.806Z`
     - metric: `"node_namespace_pod_container:container_cpu_usage_seconds_total:sum"{cluster="local-cluster",clusterID="5882a201-a139-4a25-8f84-dba8f8c2a9b2",namespace="openshift-apiserver-operator"}`

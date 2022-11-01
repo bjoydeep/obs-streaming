@@ -85,7 +85,7 @@ spec:
 _Is this needed Application level RBAC?_: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/manifest/spark-application-rbac/spark-application-rbac.yaml
 
 #### Simple Kafka Streaming Example
-Trying to launch home grown [simpleKafkaConsumer.py](spark/simpleKafkaConsumer.py) but __Kafka starts erroring out__ while using Operator. We are still debugging this. It appears to be some permission related issue  - we will get to the bottom of this soon.
+Trying to launch home grown [simpleKafkaConsumer.py](../spark/streaming/simpleKafkaMetricConsumer.py) but __Kafka starts erroring out__ while using Operator. We are still debugging this. It appears to be some permission related issue  - we will get to the bottom of this soon.
 
 ```
 apiVersion: "sparkoperator.k8s.io/v1beta2"
@@ -248,10 +248,10 @@ Caused by: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.s
 ```
 #### Launching a simple job
 
-Launching home grown [helloworld.py](spark/helloworld.py)
+Launching home grown [helloworld.py](../spark/streaming/helloworld.py)
 ```
 /bin/spark-submit \
---master k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443 \
+--master k8s://https://api.xx.yy.zz:6443 \
 --deploy-mode cluster \
 --conf spark.kubernetes.namespace=default \
 --conf spark.app.name=spark-hello-jb-rem \
@@ -275,15 +275,15 @@ Launching home grown [helloworld.py](spark/helloworld.py)
 -v local:///opt/spark/work-dir/helloworld.py
 ```
 
-#### Launching a Kafka streaming job
+#### Launching a Kafka Metric streaming job
 
-Launching home grown [simpleKafkaConsumer.py](spark/simpleKafkaConsumer.py)
+Launching home grown [simpleKafkaMetricConsumer.py](../spark/streaming/simpleKafkaMetricConsumer.py)
  1. Look at the packages to see all the spark packages needed.
  1. Look at how the ivy2 works on the home dir. The Spark google operator pod does not allow that.
  1. This also required to add 3 jars to the `/opt/spark/jar` in the local spark install. 
 ```
 (base) ➜  spark ./bin/spark-submit \
---master k8s://https://api.aws-jb-acm25.dev05.red-chesterfield.com:6443 \
+--master k8s://https://api.xx.yy.zz:6443 \
 --deploy-mode cluster \
 --conf spark.kubernetes.namespace=default \
 --conf spark.app.name=spark-kafka-jb \
@@ -439,4 +439,33 @@ Classpath elements:
 /Users/jbanerje/.ivy2/jars/org.xerial.snappy_snappy-java-1.1.7.5.jar
 /Users/jbanerje/.ivy2/jars/org.slf4j_slf4j-api-1.7.30.jar
 
+```
+
+#### Launching a Kafka Log streaming job
+
+```
+./bin/spark-submit \
+--master k8s://https://api.xx.yy.zz:6443 \
+--deploy-mode cluster \
+--conf spark.kubernetes.namespace=default \
+--conf spark.app.name=spark-kafka-log-jb \
+--conf spark.kubernetes.driver.pod.name=spark-kafka-log-jb-driver \
+--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1,org.apache.spark:spark-token-provider-kafka-0-10_2.12:3.0.1,org.apache.commons:commons-pool2:2.6.2 \
+--conf spark.kubernetes.container.image=quay.io/bjoydeep/pyspark:latest \
+--conf spark.kubernetes.container.image.pullPolicy=Always \
+--conf spark.kubernetes.submission.waitAppCompletion=false \
+--conf spark.kubernetes.driver.label.sparkoperator.k8s.io/app-name=spark-kafka-log-jb \
+--conf spark.kubernetes.driver.label.sparkoperator.k8s.io/launched-by-spark-operator=true \
+--conf spark.kubernetes.authenticate.driver.serviceAccountName=my-release-spark \
+--conf spark.driver.cores=1 \
+--conf spark.kubernetes.driver.limit.cores=1200m \
+--conf spark.driver.memory=512m \
+--conf spark.kubernetes.driver.label.version=3.0.1 \
+--conf spark.kubernetes.executor.label.sparkoperator.k8s.io/app-name=spark-kafka-log-jb \
+--conf spark.kubernetes.executor.label.sparkoperator.k8s.io/launched-by-spark-operator=true \
+--conf spark.executor.instances=1 \
+--conf spark.executor.cores=1 \
+--conf spark.executor.memory=512m \
+--conf spark.kubernetes.executor.label.version=3.0.1 \
+-v local:///opt/spark/work-dir/simpleKafkaLogConsumer.py
 ```
