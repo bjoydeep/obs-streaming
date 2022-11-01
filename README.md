@@ -17,7 +17,7 @@
 
 We will follow [Spark Structured Streaming](https://spark.apache.org/docs/3.3.0/structured-streaming-programming-guide.html).
 
-### Initial motivating example
+### Initial motivating examples
 As a starter, we have added a few simple examples - one for logs and one for metrics.
 1. Streaming Metric Analytic
 
