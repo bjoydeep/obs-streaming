@@ -32,9 +32,10 @@ RUN INSTALL_PKGS="python38 python38-devel python38-setuptools python38-pip nss_w
 ENV PYTHONPATH ${SPARK_HOME}/python/lib/pyspark.zip:${SPARK_HOME}/python/lib/py4j-*.zip
 
 WORKDIR /opt/spark/jars
-COPY spark-sql-kafka-0-10_2.12-3.0.1.jar .
-COPY spark-streaming-kafka-0-10-assembly_2.12-3.0.1.jar .
-COPY commons-pool2-2.6.2.jar .
+COPY jars/spark-sql-kafka-0-10_2.12-3.0.1.jar .
+COPY jars/spark-streaming-kafka-0-10-assembly_2.12-3.0.1.jar .
+COPY jars/commons-pool2-2.6.2.jar .
+
 RUN chmod a+rwx /opt/spark/jars/spark-sql-kafka-0-10_2.12-3.0.1.jar
 RUN chmod a+rwx /opt/spark/jars/spark-streaming-kafka-0-10-assembly_2.12-3.0.1.jar
 RUN chmod a+rwx /opt/spark/jars/commons-pool2-2.6.2.jar
@@ -47,9 +48,9 @@ RUN chmod a+rwx /opt/spark/.ivy2/jars
 
 WORKDIR /opt/spark/work-dir
 
-COPY helloworld.py .
-COPY simpleKafkaConsumer.py .
-COPY simpleLogConsumer.py .
+COPY streaming/helloworld.py .
+COPY streaming/simpleKafkaMetricConsumer.py .
+COPY streaming/simpleKafkaLogConsumer.py .
 
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
 

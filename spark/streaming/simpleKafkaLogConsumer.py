@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     spark = SparkSession \
         .builder \
-        .appName("SimpleStreamingMetricConsumerKafka") \
+        .appName("SimpleStreamingLogConsumerKafka") \
         .getOrCreate()
 
     spark.sparkContext.setLogLevel("WARN")    
