@@ -50,7 +50,7 @@ For installing and Testing Spark, follow [this](doc/InstallSpark.md).
 
 For building docker container for Spark Driver, follow [this](doc/CreateSparkDockerDriver.md).
 
-#### Create a real Spark Application CR
+#### Create a real Spark Application
 
 For launching a real Spark Application, follow [this](doc/LaunchSparkJob.md).
 
