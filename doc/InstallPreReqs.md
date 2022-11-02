@@ -43,8 +43,9 @@ Now data should be flowing into `Kafka` topic `metrics`. To test this, log into 
 ```
 
 ### Install ClusterLoggingOperator
-
-1. Install CLO on OCP 4.10 - CLO Version: `5.5.3`
+If interested in streaming Logs and events, follow this.
+1. Install CLO on OCP 4.10 - CLO Version: `5.5.3`. For details, see [here](https://docs.openshift.com/container-platform/4.10/logging/cluster-logging-deploying.html).
 1. Create [ClusterLogging CR](../deploy/clusterLogging_cr.yaml)
 1. Create [ClusterLogForwarder CR](../deploy/clusterLogForwarder_cr.yaml). Notes this forwards to "internal kafka service". We will need to change it for forward to external kafka (just did not have the time!)
-1. Create [KafkaTopic CR](../deploy/kafkaTopic_for_log_cr.yaml) for logs
+1. Create [KafkaTopic CR](../deploy/kafkaTopic_for_log_cr.yaml) for logs. Note - have to investigate right size for max bytes settings (look inside the CR).
+1. Create [event router deployment](../deploy/eventrouter.yaml). For details, see [here](https://docs.openshift.com/container-platform/4.10/logging/cluster-logging-eventrouter.html).
