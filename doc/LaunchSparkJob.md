@@ -47,7 +47,7 @@ spec:
 ```        
 
 #### HelloWorld example
-The snip below creates a CR for launching  __HelloWorld__  Spark example as shown in [helloworld.py](spark/helloworld.py) . Note this file is also a part of the Spark Driver docker image built earlier.
+The snip below creates a CR for launching  __HelloWorld__  Spark example as shown in [helloworld.py](../spark/streaming/helloworld.py) . Note this file is also a part of the Spark Driver docker image built earlier.
 ```
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
@@ -85,7 +85,7 @@ spec:
 _Is this needed Application level RBAC?_: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/manifest/spark-application-rbac/spark-application-rbac.yaml
 
 #### Simple Kafka Streaming Example
-Trying to launch home grown [simpleKafkaConsumer.py](../spark/streaming/simpleKafkaMetricConsumer.py) but __Kafka starts erroring out__ while using Operator. We are still debugging this. It appears to be some permission related issue  - we will get to the bottom of this soon.
+Trying to launch [simpleKafkaMetricConsumer.py](../spark/streaming/simpleKafkaMetricConsumer.py) but __Kafka starts erroring out__ while using Operator. We are still debugging this. It appears to be some permission related issue  - we will get to the bottom of this soon.
 
 ```
 apiVersion: "sparkoperator.k8s.io/v1beta2"
@@ -248,7 +248,7 @@ Caused by: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.s
 ```
 #### Launching a simple job
 
-Launching home grown [helloworld.py](../spark/streaming/helloworld.py)
+Launching [helloworld.py](../spark/streaming/helloworld.py)
 ```
 /bin/spark-submit \
 --master k8s://https://api.xx.yy.zz:6443 \
@@ -277,7 +277,7 @@ Launching home grown [helloworld.py](../spark/streaming/helloworld.py)
 
 #### Launching a Kafka Metric streaming job
 
-Launching home grown [simpleKafkaMetricConsumer.py](../spark/streaming/simpleKafkaMetricConsumer.py)
+Launching [simpleKafkaMetricConsumer.py](../spark/streaming/simpleKafkaMetricConsumer.py)
  1. Look at the packages to see all the spark packages needed.
  1. Look at how the ivy2 works on the home dir. The Spark google operator pod does not allow that.
  1. This also required to add 3 jars to the `/opt/spark/jar` in the local spark install. 
@@ -442,6 +442,8 @@ Classpath elements:
 ```
 
 #### Launching a Kafka Log streaming job
+
+Launching [SimpleKafkaLogConsumer](../spark/streaming/simpleKafkaLogConsumer.py)
 
 ```
 ./bin/spark-submit \
